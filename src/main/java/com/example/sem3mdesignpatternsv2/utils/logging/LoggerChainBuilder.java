@@ -18,7 +18,7 @@ public class LoggerChainBuilder implements Builder<LoggerChain> {
     }
 
     public LoggerChainBuilder addLogger(BaseLogger logger) {
-        loggers.add(new LoggerProxy(logger, logLevel));
+        loggers.add(new LoggerDecorator(logger, logLevel));
         return this;
     }
     public LoggerChainBuilder addLogger(LoggerFactory factory) {

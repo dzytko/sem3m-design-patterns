@@ -1,10 +1,10 @@
 package com.example.sem3mdesignpatternsv2.utils.logging;
 
-public class LoggerProxy extends BaseLogger{
+public class LoggerDecorator extends BaseLogger{
     private final BaseLogger logger;
     private final LogLevel logLevel;
 
-    public LoggerProxy(BaseLogger logger, LogLevel logLevel) {
+    public LoggerDecorator(BaseLogger logger, LogLevel logLevel) {
         this.logger = logger;
         this.logLevel = logLevel;
     }
