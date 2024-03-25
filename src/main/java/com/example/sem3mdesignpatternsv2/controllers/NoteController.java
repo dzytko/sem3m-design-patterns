@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Properties;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,17 +40,47 @@ public class NoteController {
 
     @PostMapping("/{id}/toLower")
     public ResponseEntity<Note> modifyNoteToLower(@PathVariable Long id) {
-        return modifyNoteById(id, new LowerModifier());
+        return modifyNoteById(id, new ModifierProxy(new LowerModifier()));
     }
 
     @PostMapping("/{id}/toUpper")
     public ResponseEntity<Note> modifyNoteToUpper(@PathVariable Long id) {
-        return modifyNoteById(id, new UpperModifier());
+        return modifyNoteById(id, new ModifierProxy(new UpperModifier()));
     }
 
     @PostMapping("/{id}/reverse")
     public ResponseEntity<Note> modifyNoteReverse(@PathVariable Long id) {
-        return modifyNoteById(id, new ReverseAdapter());
+        return modifyNoteById(id, new ModifierProxy(new ReverseAdapter()));
+    }
+
+    @PostMapping("/{id}/upandreverse")
+    public ResponseEntity<Note> modifyNoteUpAndReverse(@PathVariable Long id) {
+        var noteFacade = new NoteModifierFacade();
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (note.getContent() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        note = noteFacade.upAndReverse(note);
+        noteRepository.save(note);
+        return ResponseEntity.ok(note);
+    }
+
+    @PostMapping("/{id}/lowandreverse")
+    public ResponseEntity<Note> modifyNoteLowerAndReverse(@PathVariable Long id) {
+        var noteFacade = new NoteModifierFacade();
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (note.getContent() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        note = noteFacade.lowerAndReverse(note);
+        noteRepository.save(note);
+        return ResponseEntity.ok(note);
     }
 
     private ResponseEntity<Note> modifyNoteById(Long noteID, TextModifier modifier) {
