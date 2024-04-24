@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 public class NoteModifierFacade {
 
     public Note upAndReverse(Note note) {
-        var uppedText = new ModifierProxy(new UpperModifier()).modify(note.getContent());
-        var reversedText = new ModifierProxy(new ReverseAdapter()).modify(uppedText);
-        note.setContent(reversedText);
+        var textModifierList = new TextModifier[]{new UpperModifier(), new ReverseAdapter()};
+        var textModifier = new TextMultiModifier(textModifierList);
+        note.setContent(textModifier.modify(note.getContent()));
         return note;
     }
 
