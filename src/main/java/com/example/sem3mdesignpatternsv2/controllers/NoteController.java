@@ -3,12 +3,15 @@ package com.example.sem3mdesignpatternsv2.controllers;
 import com.example.sem3mdesignpatternsv2.entities.Note;
 import com.example.sem3mdesignpatternsv2.repositories.NoteRepository;
 import com.example.sem3mdesignpatternsv2.utils.textModifiers.*;
+import com.example.sem3mdesignpatternsv2.utils.textValidator.LowerValidator;
+import com.example.sem3mdesignpatternsv2.utils.textValidator.NoteValidator;
+import com.example.sem3mdesignpatternsv2.utils.textValidator.TextValidator;
+import com.example.sem3mdesignpatternsv2.utils.textValidator.UpperValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Properties;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +43,7 @@ public class NoteController {
 
     @PostMapping("/{id}/toLower")
     public ResponseEntity<Note> modifyNoteToLower(@PathVariable Long id) {
-        return modifyNoteById(id, new ModifierProxy(new LowerModifier()));
+        return modifyNoteById(id, new ModifierProxy(new LowerLoggingModifier())); // Liskov
     }
 
     @PostMapping("/{id}/toUpper")
@@ -81,6 +84,31 @@ public class NoteController {
         note = noteFacade.lowerAndReverse(note);
         noteRepository.save(note);
         return ResponseEntity.ok(note);
+    }
+
+    @PostMapping("/{id}/validate/up")
+    public ResponseEntity<Note> validateNoteUp(@PathVariable Long id) {
+        return validateNoteById(id, new UpperValidator());
+    }
+
+    @PostMapping("/{id}/validate/low")
+    public ResponseEntity<Note> validateNoteLow(@PathVariable Long id) {
+        return validateNoteById(id, new LowerValidator());
+    }
+
+    private ResponseEntity<Note> validateNoteById(Long noteID, TextValidator validator) {
+        var noteValidator = new NoteValidator(validator);
+        Note note = noteRepository.findById(noteID).orElse(null);
+        if (note == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (note.getContent() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (noteValidator.validate(note.getContent())) {
+            return ResponseEntity.ok(note);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     private ResponseEntity<Note> modifyNoteById(Long noteID, TextModifier modifier) {

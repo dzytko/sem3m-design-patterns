@@ -3,8 +3,8 @@ package com.example.sem3mdesignpatternsv2.utils.textModifiers;
 import com.example.sem3mdesignpatternsv2.entities.Note;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
+// Odrwacanie zależności
 @Setter
 @Getter
 public class NoteModifier {

@@ -2,6 +2,7 @@ package com.example.sem3mdesignpatternsv2.utils.logging;
 
 import java.util.Set;
 
+// Odwracanie zależności
 public class LoggerChain extends BaseLogger
 {
     private final Set<BaseLogger> loggers;
