@@ -1,6 +1,8 @@
 package com.example.sem3mdesignpatternsv2.utils.textModifiers;
 
 
+import java.util.Arrays;
+
 public class TextMultiModifier {
     private final TextModifier[] modifiers;
 
@@ -9,9 +11,8 @@ public class TextMultiModifier {
     }
 
     public String modify(String text) {
-        for (TextModifier modifier : modifiers) {
-            text = modifier.modify(text);
-        }
-        return text;
+        return Arrays.stream(modifiers)
+                .reduce(text, (modifiedText, modifier) -> modifier.modify(modifiedText), (a, b) -> b);
+
     }
 }

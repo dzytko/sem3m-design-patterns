@@ -13,8 +13,6 @@ public class LoggerChain extends BaseLogger
 
     @Override
     protected void log(String message) {
-        for (BaseLogger logger : loggers) {
-            logger.log(message);
-        }
+        loggers.forEach(logger -> logger.log(message));
     }
 }
