@@ -86,6 +86,21 @@ public class NoteController {
         return ResponseEntity.ok(note);
     }
 
+
+    @GetMapping("/{id}/count")
+    public ResponseEntity<Integer> countCharacters(@PathVariable Long id) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (note.getContent() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        int count = note.getContent().chars().mapToObj(c -> (char) c).mapToInt(c -> 1).sum();
+        return ResponseEntity.ok(count);
+    }
+
     @PostMapping("/{id}/validate/up")
     public ResponseEntity<Note> validateNoteUp(@PathVariable Long id) {
         return validateNoteById(id, new UpperValidator());
