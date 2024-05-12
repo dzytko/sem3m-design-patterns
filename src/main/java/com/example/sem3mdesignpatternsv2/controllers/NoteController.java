@@ -1,6 +1,8 @@
 package com.example.sem3mdesignpatternsv2.controllers;
 
 import com.example.sem3mdesignpatternsv2.entities.Note;
+import com.example.sem3mdesignpatternsv2.exceptins.BadRequestException;
+import com.example.sem3mdesignpatternsv2.exceptins.NotFoundException;
 import com.example.sem3mdesignpatternsv2.repositories.NoteRepository;
 import com.example.sem3mdesignpatternsv2.utils.textModifiers.*;
 import com.example.sem3mdesignpatternsv2.utils.textValidator.LowerValidator;
@@ -25,12 +27,15 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Note> getNote(@PathVariable Long id) {
-        return ResponseEntity.ok(noteRepository.findById(id).get());
+    public ResponseEntity<Note> getNote(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(noteRepository.findById(id).orElseThrow(() -> new NotFoundException("Student with id " + id + " not found")));
     }
 
     @PostMapping
-    public ResponseEntity<Note> createNote(@RequestBody Note note) {
+    public ResponseEntity<Note> createNote(@RequestBody Note note) throws BadRequestException {
+        if (note.getTitle().isEmpty()) {
+            throw new BadRequestException("Title cannot be empty");
+        }
         noteRepository.save(note);
         return ResponseEntity.ok(note);
     }
