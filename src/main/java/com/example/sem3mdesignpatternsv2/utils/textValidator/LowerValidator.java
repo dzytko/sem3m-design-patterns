@@ -4,6 +4,6 @@ public class LowerValidator implements TextValidator {
 
         @Override
         public boolean validate(String text) {
-            return text.equals(text.toLowerCase());
+            return text != null && text.equals(text.toLowerCase());
         }
 }

@@ -4,6 +4,6 @@ public class UpperValidator implements TextValidator {
 
     @Override
     public boolean validate(String text) {
-        return text.equals(text.toUpperCase());
+        return text != null && text.equals(text.toUpperCase());
     }
 }
